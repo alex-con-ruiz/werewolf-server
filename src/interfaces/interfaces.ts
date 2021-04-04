@@ -1,15 +1,30 @@
-interface CreateRoomData {
+// Room Creation
+export interface CreateRoomData {
   name: string;
   player: string;
 }
 
-interface RoomSchema {
+export interface RoomSchema {
   roomId: string;
   roomName: string;
   owner: string;
+  readyCheck: boolean;
+  playing: boolean;
+  phase: string;
+  rols: any;
+  rolsInPlay: any;
   cardsOnTable: any[];
   players: PlayerRoomSchema[];
-  config?: RoomConfiguration
+  isShadowed: boolean;
+}
+
+export interface RolSchema {
+  SID: string;
+  rolId: string;
+  rolName: string;
+  action: string | null;
+  actionDescription: string;
+  flavor: string;
 }
 
 export interface PlayerRoomSchema {
@@ -19,17 +34,25 @@ export interface PlayerRoomSchema {
   isOnline: boolean;
 }
 
-interface RoomConfiguration {
 
-}
-
-interface joinRoomData {
+// join Room
+export interface joinRoomData {
   roomId: string;
   player: string;
 }
 
-export {
-  CreateRoomData,
-  RoomSchema,
-  joinRoomData
+export interface reJoinRoomData extends joinRoomData {
+  SID: string;
+}
+
+
+// ReadyCheck Data
+
+export interface AskCheckData {
+  roomId: string;
+}
+
+export interface CheckAcceptanceData {
+  roomId: string;
+  SID: string;
 }

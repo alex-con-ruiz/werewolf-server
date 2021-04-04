@@ -1,5 +1,10 @@
 import { RoomSchema } from "../interfaces/interfaces";
 
-const rooms: RoomSchema[] = [];
+export const rooms: RoomSchema[] = [];
+export const shadowRooms: any[] = [];
 
-export {rooms}
+export const readyCheckStatus: readyCheckStatus[] = []
+interface readyCheckStatus {
+  roomid: string;
+  checks: string[];
+}
