@@ -1,8 +1,10 @@
-import { rooms } from "../core/rooms"
-import { joinRoomData, PlayerRoomSchema } from '../interfaces/interfaces';
 import { nanoid } from 'nanoid';
+import { Server, Socket } from "socket.io";
+import { visibleRoom } from '../core/middlewares/visibleRoom';
+import { rooms } from "../core/rooms";
+import { joinRoomData, PlayerRoomSchema } from '../interfaces/interfaces';
 
-const joinRoom = (socket: any, data: joinRoomData, ioReference: any) => {
+export const joinRoom = (socket: Socket, data: joinRoomData, ioReference: Server) => {
 
   socket.join(data.roomId)
 
@@ -28,12 +30,6 @@ const joinRoom = (socket: any, data: joinRoomData, ioReference: any) => {
     return;
   }
 
-  const room = rooms.find(room => room.roomId === data.roomId)!;
-
   socket.emit('SID', player.id)
-  ioReference.in(data.roomId).emit('updatedRoom', { room });
-}
-
-export {
-  joinRoom
+  ioReference.in(data.roomId).emit('updatedRoom', { room: visibleRoom(data.roomId) });
 }

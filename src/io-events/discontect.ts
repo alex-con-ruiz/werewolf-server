@@ -1,7 +1,8 @@
+import { Server } from "socket.io";
+import { visibleRoom } from '../core/middlewares/visibleRoom';
 import { rooms } from "../core/rooms";
-import { RoomSchema } from "../interfaces/interfaces";
 
-const disconnect = (socketId: string, ioReference: any) => {
+export const disconnect = (socketId: string, ioReference: Server) => {
 
   let roomId: string | null = null;
 
@@ -18,11 +19,5 @@ const disconnect = (socketId: string, ioReference: any) => {
     return;
   }
 
-  const room: RoomSchema = rooms.find(room => room.roomId === roomId)!;
-
-  ioReference.in(roomId).emit('updatedRoom', { room });
-}
-
-export {
-  disconnect
+  ioReference.in(roomId).emit('updatedRoom', { room: visibleRoom(roomId) });
 }

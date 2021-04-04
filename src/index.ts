@@ -1,8 +1,8 @@
-import { CreateRoomData, joinRoomData } from "./interfaces/interfaces";
-import { createRoom, disconnect, joinRoom, rejoin } from "./io-events";
+import express from "express";
+import { Server, Socket } from 'socket.io';
+import { AskCheckData, CheckAcceptanceData, CreateRoomData, joinRoomData, reJoinRoomData } from './interfaces/interfaces';
+import { askCheck, checkAcceptance, createRoom, disconnect, joinRoom, rejoin } from "./io-events";
 
-const express = require("express");
-const socket = require("socket.io");
 
 // App setup
 const PORT = 5001;
@@ -16,17 +16,25 @@ const server = app.listen(PORT, function () {
 app.use(express.static("public"));
 
 // Socket setup
-const io = socket(server, { cors: { origin: '*' } });
+const io = new Server(server, { cors: { origin: '*' } });
 
-io.on("connection", (socket: any) => {
+io.on("connection", (socket: Socket) => {
 
-  console.log(`Se conecto: ${socket.id}`);
+  // console.log(`Se conecto: ${socket.id}`);
 
   socket.on('createRoom', (data: CreateRoomData) => createRoom(socket, data));
 
   socket.on('joinRoom', (data: joinRoomData) => joinRoom(socket, data, io));
 
-  socket.on('rejoinRoom', (data: any) => rejoin(socket, io, data))
+  socket.on('rejoinRoom', (data: reJoinRoomData) => rejoin(socket, io, data))
 
   socket.on('disconnect', () => disconnect(socket.id, io));
+
+  //TODO: Leave Room.
+
+  // Game -- ReadyCheck
+  socket.on('askCheck', (data: AskCheckData) => askCheck(data, io, socket));
+  socket.on('readyConfimation', (data: CheckAcceptanceData) => checkAcceptance(data));
+
+  // Game -- Game Running
 });
